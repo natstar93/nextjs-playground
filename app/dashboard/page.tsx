@@ -1,0 +1,11 @@
+
+
+export default function Dashboard() {
+  return (
+      <div className="flex flex-col justify-center items-center gap-[32px] row-start-2 bg-emerald-700 p-8 w-1/2 h-32">
+        I am a dashboard page
+      </div>
+
+  );
+}
+  
