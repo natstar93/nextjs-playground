@@ -8,11 +8,19 @@ export default function Dashboard() {
   };
 
   return (
-      <div className="flex flex-col justify-center items-center gap-2 row-start-2 bg-emerald-700 p-8 w-1/2">
-        I am an account page
-        {Object.entries(data).map(([key, value]) => <Setting key={key} name={key} value={value}/>)}
-      </div>
-
+    <div className="flex flex-col justify-center items-center gap-2 row-start-2 bg-emerald-700 p-8 w-1/2">
+      I am an account page
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.entries(data).map(([key, value]) => <Setting key={key} name={key} value={value} />)}
+        </tbody>
+      </table>
+    </div>
   );
 }
-  
