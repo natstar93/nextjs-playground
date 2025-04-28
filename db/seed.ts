@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import bcrypt from 'bcrypt';
 import postgres from 'postgres';
+
+import { Revenue } from '@/app/lib/types';
 import { invoices, customers, revenue, users } from './placeholder-data';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
@@ -91,7 +93,7 @@ async function seedRevenue() {
 
   const insertedRevenue = await Promise.all(
     revenue.map(
-      (rev: { month: string, revenue: number }) => sql`
+      (rev: Revenue) => sql`
         INSERT INTO revenue (month, revenue)
         VALUES (${rev.month}, ${rev.revenue})
         ON CONFLICT (month) DO NOTHING;
