@@ -1,6 +1,7 @@
+import 'dotenv/config';
 import bcrypt from 'bcrypt';
 import postgres from 'postgres';
-import { invoices, customers, revenue, users } from '../lib/placeholder-data';
+import { invoices, customers, revenue, users } from './placeholder-data';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -90,7 +91,7 @@ async function seedRevenue() {
 
   const insertedRevenue = await Promise.all(
     revenue.map(
-      (rev) => sql`
+      (rev: { month: string, revenue: number }) => sql`
         INSERT INTO revenue (month, revenue)
         VALUES (${rev.month}, ${rev.revenue})
         ON CONFLICT (month) DO NOTHING;
@@ -101,7 +102,9 @@ async function seedRevenue() {
   return insertedRevenue;
 }
 
-export async function GET() {
+export async function seedAll() {
+  console.info('Starting database seeding...\n');
+
   try {
     await sql.begin(() => [
       seedUsers(),
@@ -109,10 +112,21 @@ export async function GET() {
       seedInvoices(),
       seedRevenue(),
     ]);
-    console.log('Seeding database')
+    console.info('\nSeeding complete\n');
 
-    return Response.json({ message: 'Database seeded successfully' });
+    return Response.json( { status: 200 });
   } catch (error) {
+    console.error('Error seeding database:', error);
     return Response.json({ error }, { status: 500 });
   }
 }
+
+seedAll()
+  .then((res) => {
+    if(res.ok) console.info('✨ Seeding successful!\n');
+    process.exit(0);
+  })
+  .catch(err => {
+    console.error('Unhandled error in seedAll:', err);
+    process.exit(1);
+  });
